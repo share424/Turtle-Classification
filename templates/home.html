@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Klasifikasi Kura-Kura</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <style>
+        .box {
+            border: 1px solid black;
+            margin: 25px 0px;
+        }
+        .title {
+            text-align: center;
+            background-color: aqua;
+        }
+        .content {
+            padding: 25px;
+        }
+        body {
+            background-color: chartreuse;
+        }
+        .no-js #loader { display: none;  }
+        .js #loader { display: block; position: absolute; left: 100px; top: 0; }
+        .se-pre-con {
+            position: fixed;
+            left: 0px;
+            top: 0px;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            background: url(/static/loading.svg?1) center no-repeat #80808080;
+        }
+    </style>
+</head>
+<body>
+    <div class="se-pre-con"></div>
+    <div class="container-fluid">
+        <h1>Klasifikasi Kura-Kura</h1>
+        <form id="form" action="preprocess" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="file">Pilih Gambar</label><br>
+                <img id="gambar" style="max-height: 200px" src="/static/images/noimage.png" alt="Gambar Kura-Kura" /><br>
+                <input type="file" id="file" name="file">
+            </div>
+           
+            <button class="btn btn-primary" type="submit">Submit</button>
+        </form>
+        <div id="output">
+            <div class="box">
+                <h1 class="title">Hasil Image Segmentation</h1>
+                <div class="content">
+                    <img id="clean" src="#" alt="Clean" style="max-height: 200px">
+                </div>
+                
+            </div>
+            <div class="box">
+                <h1 class="title">Hasil Gray Level Co-Occurrence Matrix</h1>
+                <div class="content">
+                    <img id="glcm" src="#" alt="Clean" style="max-height: 200px">
+                </div>
+            </div>
+            <div class="box">
+                <h1 class="title">Hasil Hue Intensity Saturation</h1>
+                <div class="content">
+                    <img id="his" src="#" alt="Clean" style="max-height: 200px">
+                </div>
+            </div>
+            <div class="box">
+                <h1 class="title">Hasil Prediction</h1>
+                <div class="content">
+                    <h5 id="prediction"></h5>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+    
+    <script src="/static/js/tf.min.js"></script>
+    <script src="/static/js/jquery.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script>
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    $('#gambar').attr('src', e.target.result);
+                }
+                
+                reader.readAsDataURL(input.files[0]); // convert to base64 string
+            }
+        }
+        $("#file").change(function() {
+            readURL(this);
+        });
+        async function loadModel() {
+            var model = await tf.loadLayersModel('/static/model/model.json');
+            return model;
+        }
+        $(document).ready(function(e) {
+            $(".se-pre-con").fadeOut("slow");
+            $("#output").hide();
+            $("#form").on('submit', (function(e) {
+                e.preventDefault();
+                $(".se-pre-con").fadeIn("fast");
+                $.ajax({
+                    url: "preprocess",
+                    method: "POST",
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    data: new FormData(this),
+                    success: function(data) {
+                        loadModel().then(model => {
+                            image_features = data.image_features;
+                            let xs = tf.tensor2d(image_features, [1, 22]);
+                            let prediction = model.predict(xs);
+                            let labels = ['Nanas Dewasa',
+                                            'Tempurung Datar',
+                                            'Nanas Muda',
+                                            'Baning Coklat',
+                                            'Bukan Kura-Kura Bengkulu',
+                                            'Pipi Putih',
+                                            'Batok',
+                                            'Garis Hitam',
+                                            'Biuku'];
+                            let label = prediction.argMax(1).arraySync();
+                            label = labels[label];
+                            d = new Date();
+                            $("#clean").attr("src", "/static/uploads/clean.jpg?"+d.getTime());
+                            $("#glcm").attr("src", "/static/uploads/glcm.jpg?"+d.getTime());
+                            $("#his").attr("src", "/static/uploads/his.jpg?"+d.getTime());
+                            $("#prediction").html(label);
+                            $("#output").show();
+                            $(".se-pre-con").fadeOut("slow");
+                        });
+                        
+                    }
+                })
+            }));
+        });
+    </script>
+</body>
+</html>
