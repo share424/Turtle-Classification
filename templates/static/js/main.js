@@ -58,7 +58,7 @@ $(document).ready(function(e) {
                                     'Batok',
                                     'Garis Hitam',
                                     'Biuku'];
-                    let labelIndex = [0, 3, 0, 4, 7, 5, 2, 1, 6];
+                    let labelIndex = [1, 4, 0, 5, 8, 6, 3, 2, 7];
                     let predictIndex = prediction.argMax(1).arraySync();
                     let label = labels[predictIndex];
                     let dict = database[predictIndex];
