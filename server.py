@@ -12,8 +12,16 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app._static_folder = os.path.abspath("templates/static/")
 
 @app.route('/')
-def hello_world():
-    return render_template('home.html')
+def index():
+    return render_template('index.html')
+
+@app.route('/klasifikasi')
+def klasifikasi():
+    return render_template('klasifikasi.html')
+
+@app.route('/info')
+def info():
+    return render_template('info.html')
 
 @app.route('/preprocess', methods=['POST'])
 def preprocess():

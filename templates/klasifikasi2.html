@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Klasifikasi Kura-Kura</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <style>
+        .box {
+            border: 1px solid black;
+            margin: 25px 0px;
+        }
+        .title {
+            text-align: center;
+            background-color: aqua;
+        }
+        .content {
+            padding: 25px;
+        }
+        body {
+            /* background-color: chartreuse; */
+        }
+        #output {
+            margin-top: 25px;
+        }
+        .no-js #loader { display: none;  }
+        .js #loader { display: block; position: absolute; left: 100px; top: 0; }
+        .se-pre-con {
+            position: fixed;
+            left: 0px;
+            top: 0px;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            background: url(/static/loading.svg?1) center no-repeat #80808080;
+        }
+    </style>
+</head>
+<body>
+    <div class="se-pre-con"></div>
+    <div class="container-fluid">
+        <h1>Klasifikasi Kura-Kura</h1>
+        <form id="form" action="preprocess" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="file">Pilih Gambar</label><br>
+                <img id="gambar" style="max-height: 200px" src="/static/images/noimage.png" alt="Gambar Kura-Kura" /><br>
+                <input type="file" id="file" name="file">
+            </div>
+           
+            <button class="btn btn-primary" type="submit">Submit</button>
+        </form>
+        <div id="output">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Segmentation</th>
+                        <th>Gray Level Co-Occurrence Matrix</th>
+                        <th>Hue Intensity Saturation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <img id="clean" src="#" alt="Clean" style="max-height: 200px">
+                        </td>
+                        <td>
+                            <img id="glcm" src="#" alt="GLCM" style="max-height: 200px">
+                        </td>
+                        <td>
+                            <img id="his" src="#" alt="HIS" style="max-height: 200px">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <table class="table  table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Feature</th>
+                                        <th>Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Contrast</td>
+                                        <td id="contrast"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Correlation</td>
+                                        <td id="correlation"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Energy</td>
+                                        <td id="energy"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Homogeneity</td>
+                                        <td id="homogeneity"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                        <td>
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Feature</th>
+                                        <th>Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Mean H</td>
+                                        <td id="mean-h"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Mean I</td>
+                                        <td id="mean-i"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Mean S</td>
+                                        <td id="mean-s"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Std H</td>
+                                        <td id="std-h"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Std I</td>
+                                        <td id="std-i"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Std S</td>
+                                        <td id="std-s"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th colspan="3">Hasil Klasifikasi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td rowspan="9">
+                            <img id="source" src="#" alt="image" style="max-width: 300px">
+                        </td>
+                        <td>Nama</td>
+                        <td id="name"></td>
+                    </tr>
+                    <tr>
+                        <td>Kingdom</td>
+                        <td id="kingdom"></td>
+                    </tr>
+                    <tr>
+                        <td>Filum</td>
+                        <td id="filum"></td>
+                    </tr>
+                    <tr>
+                        <td>Kelas</td>
+                        <td id="kelas"></td>
+                    </tr>
+                    <tr>
+                        <td>Ordo</td>
+                        <td id="ordo"></td>
+                    </tr>
+                    <tr>
+                        <td>Famili</td>
+                        <td id="famili"></td>
+                    </tr>
+                    <tr>
+                        <td>Genus</td>
+                        <td id="genus"></td>
+                    </tr>
+                    <tr>
+                        <td>Spesies</td>
+                        <td id="spesies"></td>
+                    </tr>
+                    <tr>
+                        <td>Ukuran</td>
+                        <td id="ukuran"></td>
+                    </tr>
+                    <tr>
+                        <td>Habitat</td>
+                        <td id="habitat" colspan="2"></td>
+                    </tr>
+                </tbody>
+            </table>
+            
+        </div>
+    </div>
+    
+    
+    
+    <script src="/static/js/tf.min.js"></script>
+    <script src="/static/js/jquery.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/main.js?3"></script>
+</body>
+</html>
