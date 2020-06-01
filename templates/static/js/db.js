@@ -92,7 +92,7 @@ const database = [
     },
     {
         id: 7,
-        name: "Bukan kura-kura Bengkulu",
+        name: "Data Tidak Teridentifikasi",
         kingdom: null,
         filum: null,
         kelas: null,

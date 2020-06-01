@@ -9,6 +9,7 @@ from his import HIS
 
 def remove_background(image):
     segment = Segment(2)
+    image = cv2.resize(image, (256, 256))
     label, segmented_image = segment.kmeans(image, 100)
     clean_image = segment.extract_object(image, label)
     return clean_image

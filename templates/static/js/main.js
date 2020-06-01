@@ -13,7 +13,7 @@ $("#file").change(function() {
     readURL(this);
 });
 async function loadModel() {
-    var model = await tf.loadLayersModel('/static/model/model.json');
+    var model = await tf.loadLayersModel('/static/model/model.json?3');
     return model;
 }
 $(document).ready(function(e) {
@@ -49,19 +49,26 @@ $(document).ready(function(e) {
 
                     let xs = tf.tensor2d(image_features, [1, 22]);
                     let prediction = model.predict(xs);
+                    prediction.print();
+                    
+
                     let labels = ['Nanas Dewasa',
                                     'Tempurung Datar',
                                     'Nanas Muda',
                                     'Baning Coklat',
-                                    'Bukan Kura-Kura Bengkulu',
                                     'Pipi Putih',
                                     'Batok',
                                     'Garis Hitam',
                                     'Biuku'];
-                    let labelIndex = [9, 3, 8, 4, 7, 5, 2, 1, 6];
+                    // let labelIndex = [9, 3, 8, 4, 5, 2, 1, 6];
+                    let labelIndex = [4, 2, 6, 1, 9, 8, 5, 3]
                     let predictIndex = prediction.argMax(1).arraySync();
-                    console.log(predictIndex);
+                    //console.log(predictIndex);
+                    let confident = prediction.arraySync()[0][predictIndex];
                     let label = labelIndex[predictIndex];
+                    if(confident < 0.3) {
+                        label = 7;
+                    }
                     let dict = database[label];
 
                     d = new Date();
@@ -86,6 +93,8 @@ $(document).ready(function(e) {
                         if(key == 'id') continue;
                         $("#"+key).html(dict[key]);
                     }
+                    
+                    $("#confident").html(confident);
 
                     $(".output").show();
                     $(".se-pre-con").fadeOut("slow");

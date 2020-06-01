@@ -37,6 +37,8 @@ def preprocess():
     # preprocess
     image = Image.open(UPLOAD_FOLDER+"/"+filename)
     image = np.array(image)
+
+    
     clean_image = remove_background(image)
 
     glcm_features = get_glcm_feature(clean_image)

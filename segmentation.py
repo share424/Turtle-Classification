@@ -19,7 +19,7 @@ class Segment:
     def extract_clean_component(self, image, label_image, label, flip=False):
         if(flip):
             label_image = (label_image - 1) * -1
-        contours, _ = cv2.findContours(label_image.astype('uint8'), 1, 2)
+        _, contours, _ = cv2.findContours(label_image.astype('uint8'), 1, 2)
         areas = [cv2.contourArea(c) for c in contours]
         idx = np.argmax(areas)
         mask = np.zeros(image.shape, np.uint8)
