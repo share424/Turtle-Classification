@@ -87,23 +87,23 @@ to get the desired effect
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
-            <li class="nav-item">
+            <!-- <li class="nav-item">
                 <a href="/" class="nav-link">
                     <i class="nav-icon fas fa-tachometer-alt"></i>
                     <p>
                     Dashboard
                     </p>
                 </a>
-            </li>
+            </li> -->
             <li class="nav-item">
-                <a href="/klasifikasi" class="nav-link active">
+                <a href="/" class="nav-link active">
                     <i class="nav-icon fas fa-eye"></i>
                     <p>
                     Identifikasi Citra
                     </p>
                 </a>
             </li>
-            <li class="nav-item has-treeview menu">
+            <!-- <li class="nav-item has-treeview menu">
                 <a href="#" class="nav-link">
                     <i class="nav-icon fas fa-info"></i>
                     <p>
@@ -155,7 +155,7 @@ to get the desired effect
                         </a>
                     </li>
                 </ul>
-            </li>
+            </li> -->
         
         </ul>
       </nav>
@@ -190,24 +190,8 @@ to get the desired effect
     <!-- Main content -->
     <div class="content">
         <div class="container-fluid">
-            <div class="card">
-                <div class="card-header">
-                    <div class="d-flex justify-content-between">
-                        <h3 class="card-title">Identifikasi Citra Kura-Kura Bengkulu</h3>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <form id="form" action="preprocess" method="post" enctype="multipart/form-data">
-                        <div class="form-group">
-                            <label for="file">Pilih Gambar</label><br>
-                            <img id="gambar" style="max-height: 200px" src="/static/images/noimage.png" alt="Gambar Kura-Kura" /><br>
-                            <input type="file" id="file" name="file">
-                        </div>
-                       
-                        <button class="btn btn-primary" type="submit">Submit</button>
-                    </form>
-                </div>
-            </div>
+        
+            <input type="text" value="{{ image_features }}" id="image-features" hidden>
 
             <div class="card output">
                 <div class="card-header">
@@ -415,6 +399,85 @@ to get the desired effect
 <script src="/static/js/jquery.js"></script>
 <script src="/static/js/bootstrap.min.js"></script>
 <script src="/static/js/db.js?3"></script>
-<script src="/static/js/main.js?20"></script>
+<script>
+    async function loadModel() {
+        var model = await tf.loadLayersModel('/static/model/model.json?3');
+        return model;
+    }
+
+    $(document).ready(function() {
+        $(".output").hide();
+        loadModel().then(model => {
+            $(".se-pre-con").fadeOut("slow");
+            let image_features = JSON.parse($("#image-features").val());
+            let contrast = 0;
+            let correlation = 0;
+            let energy = 0;
+            let homogeneity = 0;
+            for(let i = 0; i<4; i++) {
+                contrast += image_features[i];
+                correlation += image_features[i+4];
+                energy += image_features[i+8];
+                homogeneity += image_features[i+12];
+            }
+            contrast /= 4;
+            correlation /= 4;
+            energy /= 4;
+            homogeneity /= 4;
+
+            let xs = tf.tensor2d(image_features, [1, 22]);
+            let prediction = model.predict(xs);
+            prediction.print();
+            
+
+            let labels = ['Nanas Dewasa',
+                            'Tempurung Datar',
+                            'Nanas Muda',
+                            'Baning Coklat',
+                            'Pipi Putih',
+                            'Batok',
+                            'Garis Hitam',
+                            'Biuku'];
+            // let labelIndex = [9, 3, 8, 4, 5, 2, 1, 6];
+            let labelIndex = [4, 2, 6, 1, 9, 8, 5, 3]
+            let predictIndex = prediction.argMax(1).arraySync();
+            //console.log(predictIndex);
+            let confident = prediction.arraySync()[0][predictIndex];
+            let label = labelIndex[predictIndex];
+            if(confident < 0.3) {
+                label = 7;
+            }
+            let dict = database[label];
+
+            d = new Date();
+            $("#clean").attr("src", "/static/uploads/clean.jpg?"+d.getTime());
+            $("#glcm").attr("src", "/static/uploads/glcm.jpg?"+d.getTime());
+            $("#his").attr("src", "/static/uploads/his.jpg?"+d.getTime());
+            $("#source").attr("src", "/static/uploads/image.jpg?"+d.getTime());
+
+            $("#contrast").html(contrast);
+            $("#correlation").html(correlation);
+            $("#energy").html(energy);
+            $("#homogeneity").html(homogeneity);
+
+            $("#mean-h").html(image_features[16]);
+            $("#mean-i").html(image_features[17]);
+            $("#mean-s").html(image_features[18]);
+            $("#std-h").html(image_features[19]);
+            $("#std-i").html(image_features[20]);
+            $("#std-s").html(image_features[21]);
+
+            for(let key in dict) {
+                if(key == 'id') continue;
+                $("#"+key).html(dict[key]);
+            }
+            
+            $("#confident").html(confident);
+
+            $(".output").show();
+            $(".se-pre-con").fadeOut("slow");
+        });
+    });
+</script>
 </body>
 </html>

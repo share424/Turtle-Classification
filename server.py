@@ -15,7 +15,7 @@ app._static_folder = os.path.abspath("templates/static/")
 def index():
     return render_template('index.html')
 
-@app.route('/klasifikasi')
+@app.route('/klasifikasi2')
 def klasifikasi():
     return render_template('klasifikasi.html')
 
@@ -23,7 +23,7 @@ def klasifikasi():
 def info():
     return render_template('info.html')
 
-@app.route('/preprocess', methods=['POST'])
+@app.route('/klasifikasi', methods=['POST'])
 def preprocess():
     if 'file' not in request.files:
         return request.files
@@ -62,7 +62,8 @@ def preprocess():
     his_image.save(UPLOAD_FOLDER+his_filename)
 
     res = {"image_features": image_features}
-    return res
+    # return res
+    return render_template('klasifikasi.html', image_features=image_features)
 
 if __name__ == '__main__':
     app.run(debug=True)

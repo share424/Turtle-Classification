@@ -1,21 +1,3 @@
-function readURL(input) {
-    if (input.files && input.files[0]) {
-        var reader = new FileReader();
-        
-        reader.onload = function(e) {
-            $('#gambar').attr('src', e.target.result);
-        }
-        
-        reader.readAsDataURL(input.files[0]); // convert to base64 string
-    }
-}
-$("#file").change(function() {
-    readURL(this);
-});
-async function loadModel() {
-    var model = await tf.loadLayersModel('/static/model/model.json?3');
-    return model;
-}
 $(document).ready(function(e) {
     $(".se-pre-con").fadeOut("slow");
     $(".output").hide();
