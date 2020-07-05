@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="static/plugins/fontawesome-free/css/all.min.css">
   <!-- IonIcons -->
   <link rel="stylesheet" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+  <link rel="stylesheet" href="static/plugins/dropzone/dropzone.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="static/dist/css/adminlte.min.css">
   <!-- Google Font: Source Sans Pro -->
@@ -43,6 +44,9 @@
         height: 100%;
         z-index: 9999;
         background: url(/static/loading.svg?1) center no-repeat #80808080;
+    }
+    .content-wrapper {
+        background-image: url(/static/images/wallpaper.jpg?1);
     }
 </style>
 </head>
@@ -198,13 +202,18 @@ to get the desired effect
                 </div>
                 <div class="card-body">
                     <form id="form" action="klasifikasi" method="post" enctype="multipart/form-data">
-                        <div class="form-group">
-                            <label for="file">Pilih Gambar</label><br>
-                            <img id="gambar" style="max-height: 200px" src="/static/images/noimage.png" alt="Gambar Kura-Kura" /><br>
-                            <input type="file" id="file" name="file">
-                        </div>
-                       
-                        <button class="btn btn-primary" type="submit">Submit</button>
+                        <center>
+                            <p>Untuk melakukan pendeteksian jenis kura-kura, silahkan masukkan gambar kura-kura pada tombol upload di bawah</p>
+                            <div class="form-group">
+                                <label for="file">Pilih Gambar</label><br>
+                                <img id="gambar" style="max-height: 200px; cursor: pointer;" src="/static/images/noimage.png" alt="Gambar Kura-Kura" /><br>
+                                <input type="file" id="file" name="file" hidden>
+                            </div>
+        
+                        
+                            <button class="btn btn-primary" type="submit">Upload</button>
+                        </center>
+                        
                     </form>
                 </div>
             </div>
@@ -244,9 +253,9 @@ to get the desired effect
 <script src="static/dist/js/adminlte.js"></script>
 
 <!-- OPTIONAL SCRIPTS -->
-<script src="/static/js/tf.min.js"></script>
 <script src="/static/js/jquery.js"></script>
 <script src="/static/js/bootstrap.min.js"></script>
+<script src="/static/plugins/dropzone/dropzone.min.js"></script>
 <script>
     $(".se-pre-con").fadeOut("slow");
     function readURL(input) {
@@ -262,6 +271,9 @@ to get the desired effect
     }
     $("#file").change(function() {
         readURL(this);
+    });
+    $("#gambar").click(function() {
+        $("#file").trigger('click');
     });
 </script>
 </body>
