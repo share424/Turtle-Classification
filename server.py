@@ -35,9 +35,12 @@ def preprocess():
     his_filename = "his.jpg"
     file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
     # preprocess
-    image = Image.open(UPLOAD_FOLDER+"/"+filename)
-    image = np.array(image)
-
+    pil_image = Image.open(UPLOAD_FOLDER+"/"+filename)
+    image = np.array(pil_image)
+    if(image.shape[-1] == 4): # RGBA, convert to RGB
+        bg = Image.new("RGB", pil_image.size, (255, 255, 255))
+        bg.paste(pil_image, mask=pil_image.split()[3])
+        image = np.array(bg)
     
     clean_image = remove_background(image)
 
