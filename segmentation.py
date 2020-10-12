@@ -15,11 +15,18 @@ class Segment:
         res = center[label.flatten()]
         segmented_image = res.reshape((image.shape))
         return label.reshape((image.shape[0], image.shape[1])), segmented_image.astype('uint8')
+
+    def get_contours(self, data):
+        if len(data) == 3:
+            return data[1]
+        else:
+            return data[0]
     
     def extract_clean_component(self, image, label_image, label, flip=False):
         if(flip):
             label_image = (label_image - 1) * -1
-        contours, _ = cv2.findContours(label_image.astype('uint8'), 1, 2)
+        data = cv2.findContours(label_image.astype('uint8'), 1, 2)
+        contours = self.get_contours(data)
         areas = [cv2.contourArea(c) for c in contours]
         idx = np.argmax(areas)
         mask = np.zeros(image.shape, np.uint8)

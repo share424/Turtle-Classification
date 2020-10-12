@@ -208,7 +208,6 @@ to get the desired effect
                             <tr>
                                 <th>Segmentation</th>
                                 <th>Gray Level Co-Occurrence Matrix</th>
-                                <th>Hue Intensity Saturation</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -218,9 +217,6 @@ to get the desired effect
                                 </td>
                                 <td>
                                     <img id="glcm" src="#" alt="GLCM" style="max-height: 200px">
-                                </td>
-                                <td>
-                                    <img id="his" src="#" alt="HIS" style="max-height: 200px">
                                 </td>
                             </tr>
                             <tr>
@@ -249,42 +245,6 @@ to get the desired effect
                                             <tr>
                                                 <td>Homogeneity</td>
                                                 <td id="homogeneity"></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </td>
-                                <td>
-                                    <table class="table table-bordered table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th>Feature</th>
-                                                <th>Value</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>Mean H</td>
-                                                <td id="mean-h"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Mean I</td>
-                                                <td id="mean-i"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Mean S</td>
-                                                <td id="mean-s"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Std H</td>
-                                                <td id="std-h"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Std I</td>
-                                                <td id="std-i"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Std S</td>
-                                                <td id="std-s"></td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -428,7 +388,7 @@ to get the desired effect
             energy /= 4;
             homogeneity /= 4;
 
-            let xs = tf.tensor2d(image_features, [1, 22]);
+            let xs = tf.tensor2d(image_features, [1, 16]);
             let prediction = model.predict(xs);
             prediction.print();
             
@@ -455,7 +415,7 @@ to get the desired effect
             d = new Date();
             $("#clean").attr("src", "/static/uploads/clean.jpg?"+d.getTime());
             $("#glcm").attr("src", "/static/uploads/glcm.jpg?"+d.getTime());
-            $("#his").attr("src", "/static/uploads/his.jpg?"+d.getTime());
+            // $("#his").attr("src", "/static/uploads/his.jpg?"+d.getTime());
             $("#source").attr("src", "/static/uploads/image.jpg?"+d.getTime());
 
             $("#contrast").html(contrast);
@@ -463,12 +423,12 @@ to get the desired effect
             $("#energy").html(energy);
             $("#homogeneity").html(homogeneity);
 
-            $("#mean-h").html(image_features[16]);
-            $("#mean-i").html(image_features[17]);
-            $("#mean-s").html(image_features[18]);
-            $("#std-h").html(image_features[19]);
-            $("#std-i").html(image_features[20]);
-            $("#std-s").html(image_features[21]);
+            // $("#mean-h").html(image_features[16]);
+            // $("#mean-i").html(image_features[17]);
+            // $("#mean-s").html(image_features[18]);
+            // $("#std-h").html(image_features[19]);
+            // $("#std-i").html(image_features[20]);
+            // $("#std-s").html(image_features[21]);
 
             for(let key in dict) {
                 if(key == 'id') continue;

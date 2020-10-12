@@ -29,7 +29,7 @@ $(document).ready(function(e) {
                     energy /= 4;
                     homogeneity /= 4;
 
-                    let xs = tf.tensor2d(image_features, [1, 22]);
+                    let xs = tf.tensor2d(image_features, [1, 16]);
                     let prediction = model.predict(xs);
                     prediction.print();
                     

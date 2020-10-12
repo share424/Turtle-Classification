@@ -45,13 +45,13 @@ def preprocess():
     clean_image = remove_background(image)
 
     glcm_features = get_glcm_feature(clean_image)
-    his_features = get_his_feature(clean_image)
+    # his_features = get_his_feature(clean_image)
     
     image_features = []
     for glcm in glcm_features:
         image_features.append(glcm)
-    for his in his_features:
-        image_features.append(his)
+    # for his in his_features:
+    #     image_features.append(his)
 
     # save fake image
     glcm_image = cv2.cvtColor(clean_image, cv2.COLOR_RGB2GRAY)
